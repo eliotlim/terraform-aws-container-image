@@ -79,7 +79,7 @@ resource "null_resource" "push_image" {
       local.build ? jsonencode(null_resource.build_image[0]) : "",
       local.copy ? jsonencode(var.copy_repository_url) : "",
       local.copy ? jsonencode(null_resource.copy_image[0]): "",
-      aws_ecr_repository.this,
+      jsonencode(aws_ecr_repository.this),
     ]))
   }
 
