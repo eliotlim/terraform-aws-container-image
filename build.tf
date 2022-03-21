@@ -62,7 +62,7 @@ resource "null_resource" "build_image" {
 }
 
 resource "null_resource" "push_image" {
-  count = var.build_context != null ? 1 : 0
+  count = (local.copy || local.build) ? 1 : 0
 
   provisioner "local-exec" {
     command     = <<EOF
