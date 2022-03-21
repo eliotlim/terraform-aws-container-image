@@ -75,13 +75,17 @@ resource "null_resource" "push_image" {
 
   triggers = {
     redeployment = sha256(join(",", [
-      local.build ? jsonencode(data.local_file.container_dockerfile) : var.copy_repository_url,
-      local.build ? jsonencode(null_resource.build_image[0]) : jsonencode(null_resource.copy_image[0]),
+      local.build ? jsonencode(data.local_file.container_dockerfile) : "",
+      local.build ? jsonencode(null_resource.build_image[0]) : "",
+      local.copy ? jsonencode(var.copy_repository_url) : "",
+      local.copy ? jsonencode(null_resource.copy_image[0]): "",
+      aws_ecr_repository.this,
     ]))
   }
 
   depends_on = [
     null_resource.build_image,
     null_resource.copy_image,
+    aws_ecr_repository.this,
   ]
 }
