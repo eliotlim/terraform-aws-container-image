@@ -34,8 +34,6 @@ resource "null_resource" "copy_image" {
       var.copy_repository_url,
     ]))
   }
-
-  depends_on = [data.local_file.container_dockerfile]
 }
 
 resource "null_resource" "build_image" {
