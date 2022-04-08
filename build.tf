@@ -6,6 +6,8 @@ locals {
   // Copy an image from a repository if specified, else build it from the given context.
   build = var.copy_repository_url == null && var.build_context != null
   copy  = var.copy_repository_url != null
+
+  fileargs = var.build_dockerfile != null ? "-f var.build_dockerfile" : ""
 }
 
 data "aws_caller_identity" "current" {}
@@ -41,7 +43,7 @@ resource "null_resource" "build_image" {
 
   provisioner "local-exec" {
     command     = <<EOF
-      docker build --tag "${var.name}:latest" . && \
+      docker build --tag "${var.name}:latest" . ${local.fileargs} && \
       docker tag "${var.name}:latest" "${local.repository_url}"
     EOF
     working_dir = "${var.build_context}/"
@@ -78,7 +80,7 @@ resource "null_resource" "push_image" {
       local.build ? jsonencode(data.local_file.container_dockerfile) : "",
       local.build ? jsonencode(null_resource.build_image[0]) : "",
       local.copy ? jsonencode(var.copy_repository_url) : "",
-      local.copy ? jsonencode(null_resource.copy_image[0]): "",
+      local.copy ? jsonencode(null_resource.copy_image[0]) : "",
       jsonencode(aws_ecr_repository.this),
     ]))
   }
