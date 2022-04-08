@@ -7,7 +7,7 @@ locals {
   build = var.copy_repository_url == null && var.build_context != null
   copy  = var.copy_repository_url != null
 
-  fileargs = var.build_dockerfile != null ? "-f var.build_dockerfile" : ""
+  fileargs = var.build_dockerfile != null ? "-f ${var.build_dockerfile}" : ""
 }
 
 data "aws_caller_identity" "current" {}
